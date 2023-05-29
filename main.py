@@ -29,9 +29,8 @@ def pull_repo():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     event_type = request.headers.get('X-GitHub-Event')
-    secret = 'your_secret'  # Set your secret here
 
-    if event_type == 'push' and request.headers.get('X-Hub-Signature') == secret:
+    if event_type == 'push' and request.headers.get('X-Hub-Signature') == webhook_secret:
         # Pull the repository if it's a push event on the main branch
         payload = request.get_json()
         if payload.get('ref') == 'refs/heads/main':
