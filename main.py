@@ -22,8 +22,8 @@ def pull_repo():
             # Pull the latest changes if the repository already exists and matches the desired URL
             subprocess.run(['git', '-C', './repository', 'pull'])
         else:
-            # Remove the existing repository and clone the desired repository if they don't match
-            shutil.rmtree('./repository')
+            # Remove the existing repository content and clone the desired repository if they don't match
+            shutil.rmtree('./repository/*', ignore_errors=True)
             subprocess.run(['git', 'clone', repo_url, './repository'])
 
 @app.route('/webhook', methods=['POST'])
