@@ -11,4 +11,4 @@ Refer to the docker-compose.yml to see configuration via container env.
 - put the repo's git https clone url in the docker-compose
 - put the webhook's secret in the docker-compose
 - change the repository mount path in the docker-compose
-  tests2
+  tests23
