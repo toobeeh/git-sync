@@ -8,5 +8,6 @@ services:
     environment:
       - REPO_URL=https://github.com/toobeeh/git-sync.git
       - WEBHOOK_SECRET=secret
+    restart: always
     volumes:
       - ./repository:/app/repository
