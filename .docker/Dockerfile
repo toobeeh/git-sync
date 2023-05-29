@@ -1,8 +1,5 @@
 FROM python:3.9-slim
 
-# Install necessary dependencies
-RUN apk add --no-cache git
-
 # Set the working directory
 WORKDIR /app
 
