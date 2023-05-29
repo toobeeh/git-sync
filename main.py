@@ -9,6 +9,9 @@ app = Flask(__name__)
 repo_url = os.environ.get('REPO_URL')
 webhook_secret = os.environ.get('WEBHOOK_SECRET')
 
+print(f"Repository URL: {repo_url}")
+print(f"Webhook secret: {webhook_secret}")
+
 def pull_repo():
     if not os.path.exists('./repository'):
         # Clone the repository if it doesn't exist locally
@@ -36,8 +39,9 @@ def webhook():
         if payload.get('ref') == 'refs/heads/main':
             print("Pulling repository...")
             pull_repo()
+            return 'Updated repo', 200
 
-    return 'Webhook received', 200
+    return 'Didnt update', 200
 
 if __name__ == '__main__':
     # Pull the repository on startup
