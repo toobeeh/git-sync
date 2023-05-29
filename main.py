@@ -1,6 +1,7 @@
 import os
 import subprocess
 import shutil
+import hashlib
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -11,6 +12,11 @@ webhook_secret = os.environ.get('WEBHOOK_SECRET')
 
 print(f"Repository URL: {repo_url}")
 print(f"Webhook secret: {webhook_secret}")
+
+def hash_secret(secret):
+    sha1_hash = hashlib.sha1()
+    sha1_hash.update(secret.encode('utf-8'))
+    return sha1_hash.hexdigest()
 
 def pull_repo():
     if not os.path.exists('./repository'):
@@ -32,8 +38,9 @@ def pull_repo():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     event_type = request.headers.get('X-GitHub-Event')
+    hashed_secret = hash_secret(webhook_secret)
 
-    if event_type == 'push' and request.headers.get('X-Hub-Signature') == webhook_secret:
+    if event_type == 'push' and request.headers.get('X-Hub-Signature') == f'sha1={hashed_secret}':
         # Pull the repository if it's a push event on the main branch
         payload = request.get_json()
         if payload.get('ref') == 'refs/heads/main':
