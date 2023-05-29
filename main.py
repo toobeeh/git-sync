@@ -40,8 +40,8 @@ def webhook():
     event_type = request.headers.get('X-GitHub-Event')
     hashed_secret = hash_secret(webhook_secret)
 
-    print(f"hash: sha1={hashed_secret}")
-    print(f"sig: {request.headers.get('X-Hub-Signature')}")
+    print(f"hash: sha1={hashed_secret}", flush=True)
+    print(f"sig: {request.headers.get('X-Hub-Signature')}", flush=True)
 
     if event_type == 'push' and request.headers.get('X-Hub-Signature') == f'sha1={hashed_secret}':
         # Pull the repository if it's a push event on the main branch
