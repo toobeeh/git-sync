@@ -12,7 +12,7 @@ def pull_repo():
     if not os.path.exists('./repository'):
         # Clone the repository if it doesn't exist locally
         subprocess.run(['git', 'clone', repo_url, './repository'])
-        
+    else: 
         # Check if the existing repository matches the desired URL
         result = subprocess.run(['git', '-C', './repository', 'remote', 'get-url', 'origin'], capture_output=True, text=True)
         existing_repo_url = result.stdout.strip()
@@ -34,6 +34,7 @@ def webhook():
         # Pull the repository if it's a push event on the main branch
         payload = request.get_json()
         if payload.get('ref') == 'refs/heads/main':
+            print("Pulling repository...")
             pull_repo()
 
     return 'Webhook received', 200
