@@ -28,6 +28,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: Dockerfile
+          file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: ghcr.io/toobeeh/git-sync/${{ env.IMAGE_NAME }}:latest
