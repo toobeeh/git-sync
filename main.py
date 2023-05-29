@@ -50,7 +50,6 @@ def webhook():
         # Pull the repository if it's a push event on the main branch
         payload = request.get_json()
         if payload.get('ref') == 'refs/heads/main':
-            print("Pulling repository...")
             pull_repo()
             return 'Updated repo', 200
 
