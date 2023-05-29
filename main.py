@@ -2,6 +2,7 @@ import os
 import subprocess
 import shutil
 import hashlib
+import hmac
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -13,10 +14,16 @@ webhook_secret = os.environ.get('WEBHOOK_SECRET')
 print(f"Repository URL: {repo_url}")
 print(f"Webhook secret: {webhook_secret}")
 
-def hash_secret(secret):
-    sha1_hash = hashlib.sha1()
-    sha1_hash.update(secret.encode('utf-8'))
-    return sha1_hash.hexdigest()
+def validate_webhook_secret(secret):
+    received_signature = request.headers.get('X-Hub-Signature-256', '')  # Get the received signature from the request headers
+    computed_signature = 'sha256=' + hmac.new(secret.encode(), request.get_data(), hashlib.sha256).hexdigest()  # Compute the signature using the secret and request data
+
+    if hmac.compare_digest(received_signature, computed_signature):
+        # The signatures match, the webhook secret is valid
+        return True
+    else:
+        # The signatures don't match, the webhook secret is invalid
+        return False
 
 def pull_repo():
     if not os.path.exists('./repository'):
@@ -38,12 +45,8 @@ def pull_repo():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     event_type = request.headers.get('X-GitHub-Event')
-    hashed_secret = hash_secret(webhook_secret)
 
-    print(f"hash: sha1={hashed_secret}", flush=True)
-    print(f"sig: {request.headers.get('X-Hub-Signature')}", flush=True)
-
-    if event_type == 'push' and request.headers.get('X-Hub-Signature') == f'sha1={hashed_secret}':
+    if event_type == 'push' and validate_webhook_secret(webhook_secret):
         # Pull the repository if it's a push event on the main branch
         payload = request.get_json()
         if payload.get('ref') == 'refs/heads/main':
